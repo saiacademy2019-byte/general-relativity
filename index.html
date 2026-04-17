@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>General Relativity — Intuitive Lecture Notes</title>
+
+  <!-- Light theme base -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Base colours ─────────────────────────────────────────── */
+    body, .app-nav, nav.app-nav {
+      background: #ffffff;
+      color: #111111;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .sidebar {
+      background: #f7f7f7;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .content {
+      background: #ffffff;
+    }
+
+    /* ── Typography ───────────────────────────────────────────── */
+    .markdown-section {
+      color: #111111;
+      font-size: 17px;
+      line-height: 1.75;
+      max-width: 860px;
+    }
+
+    .markdown-section h1 {
+      color: #111;
+      font-size: 2.2em;
+      font-weight: 700;
+      border-bottom: 2px solid #111;
+      padding-bottom: 0.3em;
+    }
+
+    .markdown-section h2 {
+      color: #1a1a2e;
+      font-size: 1.7em;
+      font-weight: 700;
+      border-bottom: 2px solid #5a189a;
+      padding-bottom: 0.2em;
+      margin-top: 2em;
+    }
+
+    .markdown-section h3 {
+      color: #3d0066;
+      font-size: 1.25em;
+      font-weight: 600;
+      margin-top: 1.6em;
+    }
+
+    .markdown-section h4 {
+      color: #555;
+      font-size: 1.05em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .markdown-section p, .markdown-section li {
+      color: #222;
+    }
+
+    .markdown-section strong { color: #111; }
+
+    .markdown-section a { color: #5a189a; }
+    .markdown-section a:hover { color: #9d4edd; }
+
+    /* ── Blockquotes ──────────────────────────────────────────── */
+    .markdown-section blockquote {
+      background: #f3eeff;
+      border-left: 4px solid #9d4edd;
+      color: #333;
+      padding: 0.8em 1.2em;
+      border-radius: 0 6px 6px 0;
+      margin: 1.2em 0;
+    }
+
+    /* ── Tables ───────────────────────────────────────────────── */
+    .markdown-section table {
+      display: table;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .markdown-section th {
+      background: #5a189a;
+      color: #fff;
+      padding: 0.5em 0.9em;
+      font-weight: 600;
+    }
+
+    .markdown-section td {
+      padding: 0.45em 0.9em;
+      border-bottom: 1px solid #e0e0e0;
+      color: #222;
+    }
+
+    .markdown-section tr:nth-child(even) td {
+      background: #f9f6ff;
+    }
+
+    /* ── Code blocks ──────────────────────────────────────────── */
+    .markdown-section code {
+      background: #f0ecff;
+      color: #5a189a;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    .markdown-section pre code {
+      background: none;
+      color: inherit;
+    }
+
+    /* ── Images — full width, prominent ──────────────────────── */
+    .markdown-section img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1.5em 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    }
+
+    /* ── Horizontal rules ─────────────────────────────────────── */
+    .markdown-section hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 2.5em 0;
+    }
+
+    /* ── Sidebar nav ──────────────────────────────────────────── */
+    .sidebar .sidebar-nav a {
+      color: #333;
+    }
+
+    .sidebar .sidebar-nav a:hover,
+    .sidebar .sidebar-nav .active {
+      color: #5a189a;
+    }
+
+    /* ── Search box ───────────────────────────────────────────── */
+    .search input {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+      color: #111;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">Loading…</div>
+
+  <script>
+    window.$docsify = {
+      name: 'General Relativity',
+      homepage: 'notes.md',
+      loadSidebar: false,
+      loadNavbar: false,
+      maxLevel: 4,
+      subMaxLevel: 3,
+      auto2top: true,
+      search: {
+        placeholder: 'Search notes…',
+        noData: 'No results.',
+      },
+    };
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-katex@1.4.4/dist/docsify-katex.js"></script>
+</body>
+</html>
