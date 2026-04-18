@@ -193,7 +193,7 @@ class MetricFlatGrid(Scene):
             x_length=6.5, y_length=4.5,
             background_line_style={"stroke_color": BLUE_D, "stroke_opacity": 0.75, "stroke_width": 2.0},
             axis_config={"color": WHITE, "stroke_opacity": 0.6},
-        ).move_to(DOWN * 0.5)
+        ).move_to(LEFT * 2.0 + DOWN * 0.5)
         self.play(Create(grid), run_time=1.5)
 
         # Displacement arrow
@@ -272,12 +272,17 @@ class MetricFlatGrid(Scene):
 # ══════════════════════════════════════════════════════════════════════════════
 class MetricTensor(Scene):
     def construct(self):
-        title = Text("The Metric Tensor  g_μν", font_size=38, weight=BOLD)
+        title_txt = Text("The Metric Tensor  ", font_size=38, weight=BOLD)
+        title_tex = MathTex(r"g_{\mu\nu}", font_size=52)
+        title = VGroup(title_txt, title_tex).arrange(RIGHT, buff=0.1, aligned_edge=DOWN)
         title.to_edge(UP, buff=0.38)
         self.play(Write(title), run_time=2); self.wait(0.4)
 
         # ── Core formula ─────────────────────────────────────────────────────
-        formula = Text("ds²  =  g_μν  dx^μ  dx^ν", font_size=34, color=METRIC_COL, weight=BOLD)
+        formula = MathTex(
+            r"ds^2 \;=\; g_{\mu\nu}\, dx^\mu\, dx^\nu",
+            font_size=44, color=METRIC_COL,
+        )
         formula.next_to(title, DOWN, buff=0.35)
         box = SurroundingRectangle(formula, color=METRIC_COL, buff=0.18, stroke_width=2.5)
         self.play(Write(formula), run_time=1.8)
@@ -285,9 +290,12 @@ class MetricTensor(Scene):
         self.wait(0.5)
 
         # ── Annotate each part ───────────────────────────────────────────────
-        ann_ds  = Text("ds²  — actual physical interval", font_size=17, color=WHITE)
-        ann_g   = Text("g_μν  — metric tensor (local measuring rule)", font_size=17, color=METRIC_COL)
-        ann_dx  = Text("dx^μ dx^ν  — coordinate displacements", font_size=17, color=YELLOW)
+        ann_ds = VGroup(MathTex(r"ds^2",          font_size=22, color=WHITE),
+                        Text(" — actual physical interval",            font_size=17, color=WHITE)).arrange(RIGHT, buff=0.08)
+        ann_g  = VGroup(MathTex(r"g_{\mu\nu}",   font_size=22, color=METRIC_COL),
+                        Text(" — metric tensor (local measuring rule)", font_size=17, color=METRIC_COL)).arrange(RIGHT, buff=0.08)
+        ann_dx = VGroup(MathTex(r"dx^\mu dx^\nu", font_size=22, color=YELLOW),
+                        Text(" — coordinate displacements",             font_size=17, color=YELLOW)).arrange(RIGHT, buff=0.08)
 
         annotations = VGroup(ann_ds, ann_g, ann_dx).arrange(DOWN, buff=0.18, aligned_edge=LEFT)
         annotations.next_to(formula, DOWN, buff=0.40).to_edge(LEFT, buff=0.8)
