@@ -447,7 +447,7 @@ class RestMotion(Scene):
         self.play(FadeOut(cap2), run_time=1)
 
         # 4-velocity equation
-        eq   = Text("g_μν u^μ u^ν = −c²", font_size=32)
+        eq   = MathTex(r"g_{\mu\nu}\, u^\mu u^\nu = -c^2", font_size=44)
         note = Text(
             "All objects move through spacetime at the same 'speed'  c.",
             font_size=21, color=GRAY,

@@ -376,8 +376,8 @@ class MinkowskiMetric(Scene):
         self.play(Write(title), run_time=2); self.wait(0.4)
 
         # ── Show the interval formula ─────────────────────────────────────────
-        mink = Text("ds²  =  −c² dt²  +  dx²  +  dy²  +  dz²",
-                    font_size=28, color=METRIC_COL, weight=BOLD)
+        mink = MathTex(r"ds^2 = -c^2\,dt^2 + dx^2 + dy^2 + dz^2",
+                       font_size=38, color=METRIC_COL)
         mink.next_to(title, DOWN, buff=0.35)
         mink_box = SurroundingRectangle(mink, color=METRIC_COL, buff=0.16, stroke_width=2)
         self.play(Write(mink), run_time=1.8)
@@ -394,7 +394,7 @@ class MinkowskiMetric(Scene):
         ).arrange(DOWN, buff=0.06)
         mat_entries.next_to(mat_lbl, DOWN, buff=0.20)
 
-        mat_eq = Text("g_μν  =", font_size=24, color=WHITE)
+        mat_eq = MathTex(r"g_{\mu\nu} =", font_size=36, color=WHITE)
         mat_eq.next_to(mat_entries, LEFT, buff=0.3)
 
         minus_note = Text("← time gets a MINUS sign", font_size=17, color=RED_D)
