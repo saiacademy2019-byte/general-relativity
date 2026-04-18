@@ -273,6 +273,7 @@
       var TEMPLATE_ID = 'template_ys83p3a';
       var PUBLIC_KEY  = 'G7clP1wSojTHtZauY';
       var DOMAIN      = 'student.education.wa.edu.au';
+      var WHITELIST   = ['saiacademy2019@gmail.com'];
       var OTP_TTL_MS  = 10 * 60 * 1000;
 
       var _otp = null;
@@ -295,7 +296,7 @@
         var email = document.getElementById('email-input').value.trim().toLowerCase();
         clearError('email-error');
 
-        if (!email.endsWith('@' + DOMAIN)) {
+        if (!email.endsWith('@' + DOMAIN) && WHITELIST.indexOf(email) === -1) {
           setError('email-error', 'Must be a @' + DOMAIN + ' address.');
           return;
         }
