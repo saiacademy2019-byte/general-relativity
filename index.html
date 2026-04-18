@@ -323,7 +323,8 @@
             'Enter the 6-digit code sent to ' + email + '.';
           document.getElementById('otp-input').focus();
         }, function (err) {
-          setError('email-error', 'Failed to send email. Please try again.');
+          console.error('EmailJS error:', JSON.stringify(err));
+          setError('email-error', 'Error: ' + (err && err.text ? err.text : JSON.stringify(err)));
           btn.disabled = false;
           btn.textContent = 'Send Code';
         });
