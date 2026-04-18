@@ -15,8 +15,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── Password gate ────────────────────────────────────────── */
-    #password-gate {
+    /* ── Auth gate ────────────────────────────────────────────── */
+    #auth-gate {
       position: fixed;
       inset: 0;
       background: #ffffff;
@@ -28,20 +28,22 @@
       font-family: 'Inter', sans-serif;
     }
 
-    #password-gate h2 {
+    #auth-gate h2 {
       color: #1a1a2e;
       font-size: 1.5em;
       font-weight: 700;
       margin-bottom: 0.3em;
     }
 
-    #password-gate p {
+    #auth-gate .subtitle {
       color: #555;
       margin-bottom: 1.5em;
       font-size: 0.95em;
+      text-align: center;
+      max-width: 300px;
     }
 
-    #password-gate input {
+    #auth-gate input {
       border: 1.5px solid #ccc;
       border-radius: 6px;
       padding: 0.55em 1em;
@@ -49,13 +51,14 @@
       width: 260px;
       outline: none;
       font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
     }
 
-    #password-gate input:focus {
+    #auth-gate input:focus {
       border-color: #5a189a;
     }
 
-    #password-gate button {
+    #auth-gate button {
       margin-top: 0.8em;
       background: #5a189a;
       color: #fff;
@@ -68,16 +71,23 @@
       width: 260px;
     }
 
-    #password-gate button:hover {
-      background: #9d4edd;
-    }
+    #auth-gate button:hover { background: #9d4edd; }
+    #auth-gate button:disabled { background: #aaa; cursor: default; }
 
-    #password-gate .error {
+    #auth-gate .error {
       color: #c0392b;
       font-size: 0.88em;
       margin-top: 0.5em;
       min-height: 1.2em;
     }
+
+    #auth-gate .info {
+      color: #555;
+      font-size: 0.88em;
+      margin-top: 0.5em;
+    }
+
+    #otp-step { display: none; flex-direction: column; align-items: center; }
   </style>
 
   <style>
@@ -232,40 +242,128 @@
   </style>
 </head>
 <body>
-  <div id="password-gate">
-    <h2>General Relativity</h2>
-    <p>Enter the access password to continue.</p>
-    <input type="password" id="pw-input" placeholder="Password" autofocus />
-    <button onclick="checkPassword()">Enter</button>
-    <div class="error" id="pw-error"></div>
+  <div id="auth-gate">
+    <!-- Step 1: email -->
+    <div id="email-step" style="display:flex;flex-direction:column;align-items:center;">
+      <h2>General Relativity</h2>
+      <p class="subtitle">Enter your student email to receive an access code.</p>
+      <input type="email" id="email-input" placeholder="you@student.education.wa.edu.au" autofocus />
+      <button id="send-btn" onclick="sendOTP()">Send Code</button>
+      <div class="error" id="email-error"></div>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div id="otp-step">
+      <h2>Check your email</h2>
+      <p class="subtitle" id="otp-subtitle">Enter the 6-digit code sent to your inbox.</p>
+      <input type="text" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric" />
+      <button id="verify-btn" onclick="verifyOTP()">Verify</button>
+      <div class="error" id="otp-error"></div>
+      <div class="info" id="otp-info"></div>
+      <button style="margin-top:1em;background:none;color:#5a189a;border:none;cursor:pointer;font-size:0.9em;width:auto;padding:0;" onclick="backToEmail()">← Use a different email</button>
+    </div>
   </div>
 
   <div id="app" style="display:none">Loading…</div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     (function () {
-      var PASSWORD = 'SaiAcademyRestrictedAccess';
+      var SERVICE_ID  = 'general_relativity_site';
+      var TEMPLATE_ID = 'template_ys83p3a';
+      var PUBLIC_KEY  = 'G7clP1wSojTHtZauY';
+      var DOMAIN      = 'student.education.wa.edu.au';
+      var OTP_TTL_MS  = 10 * 60 * 1000;
+
+      var _otp = null;
+      var _otpExpiry = null;
+      var _email = null;
+
+      emailjs.init({ publicKey: PUBLIC_KEY });
+
       if (sessionStorage.getItem('gr_auth') === '1') { unlock(); }
 
       function unlock() {
-        document.getElementById('password-gate').style.display = 'none';
+        document.getElementById('auth-gate').style.display = 'none';
         document.getElementById('app').style.display = '';
       }
 
-      window.checkPassword = function () {
-        var val = document.getElementById('pw-input').value;
-        if (val === PASSWORD) {
-          sessionStorage.setItem('gr_auth', '1');
-          unlock();
-        } else {
-          document.getElementById('pw-error').textContent = 'Incorrect password.';
-          document.getElementById('pw-input').value = '';
-          document.getElementById('pw-input').focus();
+      function setError(id, msg) { document.getElementById(id).textContent = msg; }
+      function clearError(id)    { document.getElementById(id).textContent = ''; }
+
+      window.sendOTP = function () {
+        var email = document.getElementById('email-input').value.trim().toLowerCase();
+        clearError('email-error');
+
+        if (!email.endsWith('@' + DOMAIN)) {
+          setError('email-error', 'Must be a @' + DOMAIN + ' address.');
+          return;
         }
+
+        _otp    = String(Math.floor(100000 + Math.random() * 900000));
+        _expiry = Date.now() + OTP_TTL_MS;
+        _email  = email;
+
+        var expiryTime = new Date(_expiry).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        var btn = document.getElementById('send-btn');
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+
+        emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+          to_email: email,
+          otp:      _otp,
+          time:     expiryTime,
+        }).then(function () {
+          document.getElementById('email-step').style.display = 'none';
+          var otpStep = document.getElementById('otp-step');
+          otpStep.style.display = 'flex';
+          document.getElementById('otp-subtitle').textContent =
+            'Enter the 6-digit code sent to ' + email + '.';
+          document.getElementById('otp-input').focus();
+        }, function (err) {
+          setError('email-error', 'Failed to send email. Please try again.');
+          btn.disabled = false;
+          btn.textContent = 'Send Code';
+        });
+      };
+
+      window.verifyOTP = function () {
+        clearError('otp-error');
+        var entered = document.getElementById('otp-input').value.trim();
+
+        if (Date.now() > _expiry) {
+          setError('otp-error', 'Code expired. Please go back and request a new one.');
+          return;
+        }
+        if (entered !== _otp) {
+          setError('otp-error', 'Incorrect code. Try again.');
+          document.getElementById('otp-input').value = '';
+          document.getElementById('otp-input').focus();
+          return;
+        }
+
+        sessionStorage.setItem('gr_auth', '1');
+        unlock();
+      };
+
+      window.backToEmail = function () {
+        _otp = null; _expiry = null; _email = null;
+        document.getElementById('otp-step').style.display = 'none';
+        document.getElementById('email-step').style.display = 'flex';
+        document.getElementById('send-btn').disabled = false;
+        document.getElementById('send-btn').textContent = 'Send Code';
+        clearError('email-error');
+        document.getElementById('email-input').focus();
       };
 
       document.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') window.checkPassword();
+        if (e.key !== 'Enter') return;
+        if (document.getElementById('otp-step').style.display === 'flex') {
+          window.verifyOTP();
+        } else {
+          window.sendOTP();
+        }
       });
     })();
   </script>
